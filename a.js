@@ -1,15 +1,61 @@
-// Our entry point. Everything is prepared.
+/*********************************************************
+ * Constants
+ *********************************************************/
+var spriteSize = 32;
+var sideSpeed = 5;
+
+
+/*********************************************************
+ * Core functionality
+ *********************************************************/
+/*
+ * Our entry point. Everything is prepared.
+ */
 window.onload = function() {
 	canvas = document.getElementById("main");
 	ctx = canvas.getContext("2d");
 	ctx.lineWidth = 1;
+
+	setInterval(mainLoop, 16);
+}
+
+/**
+ * Keyboard Detection
+ */
+window.onkeypress = function(evt) {
+	evt = evt || window.event;
+	switch(evt.keyCode) {
+		case 65:
+		case 97:
+			shipX -= sideSpeed;
+			break;
+		case 87:
+		case 119:
+			console.log("go up");
+			break;
+		case 68:
+		case 100:
+			shipX += sideSpeed;
+			break;
+	}
+}
+
+/**
+ * Main Game Loop
+ */
+function mainLoop() {
+
 	draw();
 }
 
 /*********************************************************
- * Constants
+ * Game Vars
  *********************************************************/
-var spriteSize = 32
+var shipX = 50;
+var shipY = 50;
+
+var isShooting = false;
+
 
 /*********************************************************
  * Minification helpers
@@ -21,7 +67,9 @@ function drawRect (x1, y1, x2, y2) {
 	ctx.fillRect(x1,y1,x2,y2);
 }
 
-
+/**
+ * Draw the whole screen
+ */
 function draw() {
 	setFill("red")
 	drawRect(0,0,800,500);
@@ -30,7 +78,7 @@ function draw() {
 	drawRect(0,0,spriteSize, spriteSize);
 
 	drawSprite("0000000BB00000000000000BB0000000000000BBBB000000000000BBBB000000000000BBBB000000000000BBBB00000000000BBBBBB000000B000BBWWBB000B0CBB00BBWWBB00BBCCBB00BBWWBB00BBCCBBBBBBBBBBBBBBCCBBBBBBBBBBBBBBCCBB000BBBB000BBC0B00000CC00000B00000000000000000",
-		50,50);
+		shipX,shipY);
 }
 
 /*
@@ -52,7 +100,10 @@ CBB000BBBB000BBC
 */
 
 /**
- * 
+ * Draw a particular sprite
+ * @param {String} mapString the legend for the sprite
+ * @param {int} x
+ * @param {int} y
  */
 function drawSprite(mapString, x, y) {
 	for(var i = 0; i < mapString.length; i++) {
@@ -70,9 +121,11 @@ function drawSprite(mapString, x, y) {
 				continue;
 				break;
 		}
-		var targetX = x + (i % 16);
-		var targetY = y + Math.floor(i / 16);
+		
+		var pixSize = 2;
+		var targetX = x + (i % 16) * pixSize;
+		var targetY = y + Math.floor(i / 16) * pixSize;
 
-		drawRect(targetX, targetY, 1, 1);
+		drawRect(targetX, targetY, pixSize, pixSize);
 	}
 }

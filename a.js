@@ -4,6 +4,9 @@
 var spriteSize = 32;
 var sideSpeed = 5;
 
+var screenWidth = 800;
+var screenHeight = 500;
+
 
 /*********************************************************
  * Core functionality
@@ -51,10 +54,14 @@ function mainLoop() {
 /*********************************************************
  * Game Vars
  *********************************************************/
-var shipX = 50;
-var shipY = 50;
-
+var shipX = screenWidth / 2 - spriteSize / 2;
+var shipY = screenHeight - screenHeight / 10;
 var isShooting = false;
+
+var arrFleet = [];
+for(var i = 0; i < 15; i++) {
+	arrFleet[i] = {x: (i % 5) * 50, y: Math.floor(i / 5) * 100};
+}
 
 
 /*********************************************************
@@ -71,14 +78,19 @@ function drawRect (x1, y1, x2, y2) {
  * Draw the whole screen
  */
 function draw() {
-	setFill("red")
-	drawRect(0,0,800,500);
+	setFill("gray")
+	drawRect(0,0,screenWidth,screenHeight);
 
 	setFill("blue");
-	drawRect(0,0,spriteSize, spriteSize);
+	drawRect(0,screenHeight - 10,screenWidth, 10);
 
 	drawSprite("0000000BB00000000000000BB0000000000000BBBB000000000000BBBB000000000000BBBB000000000000BBBB00000000000BBBBBB000000B000BBWWBB000B0CBB00BBWWBB00BBCCBB00BBWWBB00BBCCBBBBBBBBBBBBBBCCBBBBBBBBBBBBBBCCBB000BBBB000BBC0B00000CC00000B00000000000000000",
 		shipX,shipY);
+
+	for (var i = 0; i < 15; i++) {
+		drawSprite("0000000BB00000000000000BB0000000000000BBBB000000000000BBBB000000000000BBBB000000000000BBBB00000000000BBBBBB000000B000BBWWBB000B0CBB00BBWWBB00BBCCBB00BBWWBB00BBCCBBBBBBBBBBBBBBCCBBBBBBBBBBBBBBCCBB000BBBB000BBC0B00000CC00000B00000000000000000",
+			arrFleet[i].x, arrFleet[i].y);
+	}
 }
 
 /*

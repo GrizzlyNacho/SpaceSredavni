@@ -5,11 +5,14 @@ var spriteSize = 32;
 var sideSpeed = 5;
 var launchSpeed = 10;
 
+var hitThreshold = spriteSize / 2;
+
 var screenWidth = 800;
 var screenHeight = 500;
 
 var fleetSize = 24;
 var shipsPerRow = 8;
+var fleetSpeed = 2;
 
 /*********************************************************
  * Core functionality
@@ -65,15 +68,32 @@ window.onkeyup = function(evt) {
  * Main Game Loop
  */
 function mainLoop() {
-	// Movement
+	// Ship Movement
 	if (isShooting) {
 		shipY -= launchSpeed;
 	}
 	shipX += moveDirection * sideSpeed;
 
+	// Ship off screen
 	if (shipY <= 0) {
-		isShooting = false;
-		shipY = screenHeight - screenHeight / 10;
+		resetShip();
+	}
+
+	// Fleet Movement
+/*	for(var i = 0; i < fleetSize; i++) {
+		arrFleet[i].x += fleetDirX * fleetSpeed;
+		arrFleet[i].y += fleetDirY * fleetSpeed;
+	}
+*/
+
+	// Fleet Hit Detection
+	for(var i = 0; i < fleetSize; i++) {
+		if (Math.abs(shipX - arrFleet[i].x) < hitThreshold
+			&& Math.abs(shipY - arrFleet[i].y < hitThreshold
+			&& !arrFleet[i].a)) {
+			arrFleet[i].a = 1;
+			resetShip();
+		}
 	}
 
 	draw();
@@ -82,12 +102,13 @@ function mainLoop() {
 /*********************************************************
  * Game Vars
  *********************************************************/
+// Ship
 var shipX = screenWidth / 2 - spriteSize / 2;
 var shipY = screenHeight - screenHeight / 10;
 var moveDirection = 0;
 var isShooting = false;
 
-
+// Fleet
 var arrFleet = [];
 for(var i = 0; i < fleetSize; i++) {
 	arrFleet[i] = {
@@ -97,7 +118,7 @@ for(var i = 0; i < fleetSize; i++) {
 	};
 }
 var fleetDirX = 1;
-var fleetDirY = 1;
+var fleetDirY = 0;
 
 
 /*********************************************************
@@ -174,4 +195,9 @@ function drawSprite(mapString, x, y) {
 
 		drawRect(targetX, targetY, pixSize, pixSize);
 	}
+}
+
+function resetShip() {
+	isShooting = false;
+	shipY = screenHeight - screenHeight / 10;
 }

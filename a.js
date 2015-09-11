@@ -61,8 +61,6 @@ window.onkeyup = function(evt) {
 	if ((keyCode == 68 || keyCode == 100) && moveDirection == 1) {
 		moveDirection = 0;
 	}
-
-
 }
 
 /**
@@ -101,18 +99,26 @@ function mainLoop() {
 			fleetAscendTicks = spriteSize / fleetSpeed;
 		}
 	}
-	
 
-
-	// Fleet Hit Detection
+	// Fleet Hit Detection and End Game condition
+	var allActivated = true;
 	for(var i = 0; i < fleetSize; i++) {
-		if (Math.abs(shipX - arrFleet[i].x) < hitThreshold
-			&& Math.abs(shipY - arrFleet[i].y < hitThreshold
-			&& !arrFleet[i].a)) {
-			arrFleet[i].a = 1;
+		var fleetShip = arrFleet[i];
+		if (Math.abs(shipX - fleetShip.x) < hitThreshold
+			&& Math.abs(shipY - fleetShip.y < hitThreshold
+			&& !fleetShip.a)) {
+			fleetShip.a = 1;
 			resetShip();
 		}
+		if (fleetShip.y < 0 && !fleetShip.a) {
+			console.log("GAME OVER");
+		}
+		allActivated &= fleetShip.a;
 	}
+	if (allActivated) {
+		console.log("You Win!");
+	}
+
 
 	draw();
 }

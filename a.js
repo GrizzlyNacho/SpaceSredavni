@@ -6,6 +6,7 @@ var sideSpeed = 5;
 var launchSpeed = 10;
 
 var hitThreshold = spriteSize / 2;
+var edgeBuffer = 0.99;
 
 var screenWidth = 800;
 var screenHeight = 500;
@@ -13,6 +14,7 @@ var screenHeight = 500;
 var fleetSize = 24;
 var shipsPerRow = 8;
 var fleetSpeed = 2;
+var fleetAscendTicks = 0;
 
 /*********************************************************
  * Core functionality
@@ -80,11 +82,28 @@ function mainLoop() {
 	}
 
 	// Fleet Movement
-/*	for(var i = 0; i < fleetSize; i++) {
-		arrFleet[i].x += fleetDirX * fleetSpeed;
-		arrFleet[i].y += fleetDirY * fleetSpeed;
+	if (fleetAscendTicks > 0) {
+		for(var i = 0; i < fleetSize; i++) {
+			arrFleet[i].y -= fleetSpeed;
+		}
+		fleetAscendTicks--;
+	} else {
+		var wallHit = 0;
+		for(var i = 0; i < fleetSize; i++) {
+			var fleetShip = arrFleet[i];
+			fleetShip.x += fleetDirX * fleetSpeed;
+			if (fleetShip.x + spriteSize > screenWidth*edgeBuffer
+				|| fleetShip.x < screenWidth*(1-edgeBuffer)) {
+				wallHit = 1;
+			}
+		}
+		if(wallHit) {
+			fleetDirX *= -1;
+			fleetAscendTicks = spriteSize / fleetSpeed;
+		}
 	}
-*/
+	
+
 
 	// Fleet Hit Detection
 	for(var i = 0; i < fleetSize; i++) {
@@ -118,7 +137,6 @@ for(var i = 0; i < fleetSize; i++) {
 	};
 }
 var fleetDirX = 1;
-var fleetDirY = 0;
 
 
 /*********************************************************

@@ -12,7 +12,6 @@ var screenWidth = 800;
 var screenHeight = 500;
 
 var fleetSize = 24;
-var shipsPerRow = 8;
 var fleetSpeed = 2;
 var fleetAscendTicks = 0;
 
@@ -131,8 +130,8 @@ var isShooting = false;
 var arrFleet = [];
 for(var i = 0; i < fleetSize; i++) {
 	arrFleet[i] = {
-		x: (i % shipsPerRow)*2*spriteSize + 160,
-		y: Math.floor(i/shipsPerRow)*2*spriteSize + 250,
+		x: (i % 8)*2*spriteSize + 160,
+		y: Math.floor(i/8)*2*spriteSize + 250,
 		a: 0
 	};
 }

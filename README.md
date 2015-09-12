@@ -30,17 +30,17 @@ The theme for the game jam is Reversed, so I thought it would be neat to do some
 ### The Actual Code
 Going into this, I knew 13k was going to be very small. As a result, I made several decisions from the start:
 
-*1. Only have 1 js file.*
+__1. Only have 1 js file.__
 This probably was totally useless in keeping the size down, but did help for being constantly reminded of how large the code was getting. My usual method for programming demands modularization and this decision ended up causing some inner turmoil as I tried to keep the code clean without doing much boilerplate code. This is why I used some big box comments to separate different logical areas.
 
-*2. Make everything Global.*
-The approach for these things is just to hack something together, but even when I'm just cobbling a game together on the quick I don't like to forgo these kinds of conventions. I thought I was going to be so strapped for space I wouldn't want to have logical modules for my different defaults and game values. I tried to be cautious with naming and with where different variables were allowed to be used, but it still felt *wrong* to be dumping everything out at global scope.
+__2. Make everything Global.__
+The approach for these things is just to hack something together, but even when I'm just cobbling a game together on the quick I don't like to forgo these kinds of conventions. I thought I was going to be so strapped for space I wouldn't want to have logical modules for my different defaults and game values. I tried to be cautious with naming and with where different variables were allowed to be used, but it still felt __wrong__ to be dumping everything out at global scope.
 
-*3. No Assets. Just code.*
+__3. No Assets. Just code.__
 I decided that with space at a premium, I wouldn't put any assets in the game. I'm no artist and certainly no sound engineer, so I didn't think this would hurt me all that much and I think I was actually right about that. No proper game is without art though, so I knew I would need some kind of solution. To that end I made a little script that would parse a string and draw it out. Each character would be a pixel of some colour and then I could have a 16x16 sprite that I could draw at any size for just 256 characters. My plan was to further compress those 256 characters down if I needed to (I could make some shorthand for repeating characters and do some compression magic on the string), but that never ended up being necessary.
 The first pass of this involved having each character representing a colour. I decided that I could get a lot more mileage out of the sprites if I made them as greyscales and did some hue multiplication magic to be able to draw the sprite in any colour without needing to specify anything more than the hue. I made some use of this, but all of my experimentation with rainbow ships felt too noisy, so I settled on red for failed spots, grey for pending spots, and a few shades of green for the player's ship.
 
 ## What I would do differently next time
-I don't feel like throwing convention out the window did much for me in terms of space. Doing JS uglifying and minifying compresses the code down an incredible amount and my final submission is *well* under the 13k maximum. I also think I would have picked a game concept that matched the theme word more apparently. While my game is a reversed version of space invaders in my eyes, it isn't always clear to the player.
+I don't feel like throwing convention out the window did much for me in terms of space. Doing JS uglifying and minifying compresses the code down an incredible amount and my final submission is __well__ under the 13k maximum. I also think I would have picked a game concept that matched the theme word more apparently. While my game is a reversed version of space invaders in my eyes, it isn't always clear to the player.
 
 The other thing I felt was lacking was how much time I put into this. The result does not feel like a game that was produced over a month. I picked and nibbled at the code over the course of the month and probably only spent around 10-15 hours of actual work into it. I still produced a game and wasn't rushed at the end, but I could have done so, so much more.

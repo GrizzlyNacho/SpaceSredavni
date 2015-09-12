@@ -5,17 +5,20 @@ var spriteSize = 32;
 var sideSpeed = 5;
 var launchSpeed = 10;
 
-var hitThreshold = spriteSize / 3;
-var edgeBuffer = 0.99;
-
 var screenWidth = 800;
 var screenHeight = 500;
 
-var fleetSize = 24;
-var fleetSpeed = 1.5;
-var fleetAscendTicks = 0;
+var hitThreshold = spriteSize / 3;
+var edgeBuffer = 0.99;
 
 var shipSprite = "0000070000700000000075000057000000075000000570000075000000005700075000000000057075000000000000577500000000000057075000055000057000750055550057000777775335777770777555555555577775553357753355577775335775335777077555577555577000077555555770000000007557000000";
+
+var shipStartX = screenWidth / 2 - spriteSize / 2;
+var shipStartY = screenHeight - screenHeight / 13;
+var fleetOriginX = 160;
+var fleetOriginY = 250;
+var fleetSize = 24;
+var fleetSpeed = 1.5;
 
 var GameStates = {
 	READY: 0,
@@ -29,26 +32,15 @@ var GameStates = {
  * Game Vars
  *********************************************************/
 // Ship
-var shipStartX = screenWidth / 2 - spriteSize / 2;
-var shipStartY = screenHeight - screenHeight / 13;
-var shipX = shipStartX;
-var shipY = shipStartY;
+var shipX = 0;
+var shipY = 0;
 var moveDirection = 0;
 var isShooting = false;
 
 // Fleet
-var fleetOriginX = 160;
-var fleetOriginY = 250;
 var arrFleet = [];
-for(var i = 0; i < fleetSize; i++) {
-	arrFleet[i] = {
-		x: (i % 8)*2*spriteSize + fleetOriginX,
-		y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
-		active: 0,
-		colour: 230
-	};
-}
-var fleetDirX = 1;
+var fleetDirX = 0;
+var fleetAscendTicks = 0;
 
 // Core game
 var currentGameState = GameStates.READY;
@@ -65,6 +57,7 @@ window.onload = function() {
 	ctx = canvas.getContext("2d");
 	ctx.lineWidth = 1;
 
+	resetGame();
 	setInterval(mainLoop, 16);
 }
 
@@ -78,6 +71,14 @@ window.onkeydown = function(evt) {
 	// Accomodates the "Any key to start"
 	if (currentGameState === GameStates.READY) {
 		currentGameState = GameStates.PROGRESS;
+		return;
+	}
+
+	// Start a new game
+	if (keyCode == 89 &&
+		(currentGameState === GameStates.WIN || 
+		currentGameState === GameStates.LOSS)) {
+		resetGame();
 		return;
 	}
 
@@ -104,8 +105,6 @@ window.onkeydown = function(evt) {
 			moveDirection = 1;
 		}	
 	}
-
-
 }
 window.onkeyup = function(evt) {
 	evt = evt || window.event;
@@ -370,4 +369,26 @@ function drawWinState() {
 function resetShip() {
 	isShooting = false;
 	shipY = shipStartY;
+	moveDirection = 0;
+}
+
+/**
+ * Reset the whole game
+ */
+function resetGame() {
+	currentGameState = GameStates.READY;
+
+	shipX = shipStartX;
+	resetShip();
+
+	fleetDirX = 1;
+	fleetAscendTicks = 0;
+	for(var i = 0; i < fleetSize; i++) {
+		arrFleet[i] = {
+			x: (i % 8)*2*spriteSize + fleetOriginX,
+			y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
+			active: 0,
+			colour: 230
+		};
+	}
 }

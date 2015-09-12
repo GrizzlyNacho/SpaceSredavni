@@ -140,7 +140,7 @@ window.onkeyup = function(evt) {
 function mainLoop() {
 	switch(currentGameState) {
 		case GameStates.PROGRESS:
-			updateMovement();
+			updateGameMovement();
 			hitDetectionAndEndGame();
 			break;
 		case GameStates.WIN:
@@ -154,9 +154,30 @@ function mainLoop() {
 }
 
 /**
+ * Do the victory 'dance'
+ */
+function updateVictoryMovement() {
+	var fleetDirY = 0;
+
+	// Line up with center and then fly out the top
+	if (Math.abs(arrFleet[0].x - fleetOriginX) < fleetSpeed) {
+		fleetDirY = 1;
+	} else if (arrFleet[0].x > fleetOriginX) {
+		fleetDirX = -1;
+	} else {
+		fleetDirX = 1;
+	}
+
+	for (var i = 0; i < fleetSize; i++) {
+		arrFleet[i].x += fleetSpeed*fleetDirX;
+		arrFleet[i].y += fleetSpeed*fleetDirY;
+	}
+}
+
+/**
  * Update the ship and fleet positions
  */
-function updateMovement() {
+function updateGameMovement() {
 	// Ship Movement
 	if (isShooting) {
 		shipY -= launchSpeed;

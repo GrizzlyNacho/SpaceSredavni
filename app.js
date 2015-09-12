@@ -27,6 +27,16 @@ var GameStates = {
 	LOSS: 3
 };
 
+var arrStarColours = [
+	"#9db4ff", "#a2b9ff", "#a7bcff", "#aabfff", "#afc3ff", "#baccff", "#c0d1ff",
+	"#cad8ff", "#e4e8ff", "#edeeff", "#fbf8ff", "#fff9f9", "#fff5ec", "#fff4e8",
+	"#fff1df", "#ffebd1", "#ffd7ae", "#ffc690", "#ffbe7f", "#ffbb7b"
+];
+var arrShipColours = [];
+for (var i = 80; i <= 130; i += 10) {
+	arrShipColours.push(i);
+}
+
 
 /*********************************************************
  * Game Vars
@@ -36,6 +46,7 @@ var shipX = 0;
 var shipY = 0;
 var moveDirection = 0;
 var isShooting = false;
+var shipColour = 130;
 
 // Fleet
 var arrFleet = [];
@@ -46,11 +57,6 @@ var fleetAscendTicks = 0;
 var currentGameState = GameStates.READY;
 
 var arrStars = [];
-var arrStarColours = [
-	"#9db4ff", "#a2b9ff", "#a7bcff", "#aabfff", "#afc3ff", "#baccff", "#c0d1ff",
-	"#cad8ff", "#e4e8ff", "#edeeff", "#fbf8ff", "#fff9f9", "#fff5ec", "#fff4e8",
-	"#fff1df", "#ffebd1", "#ffd7ae", "#ffc690", "#ffbe7f", "#ffbb7b"
-];
 for(var i = 0; i < 500; i++) {
 	arrStars[i] = {
 		x: ~~(Math.random() * screenWidth),
@@ -254,6 +260,7 @@ function hitDetectionAndEndGame() {
 			&& Math.abs(shipY - fleetShip.y < hitThreshold
 			&& !fleetShip.active)) {
 			fleetShip.active = 1;
+			fleetShip.colour = shipColour;
 			resetShip();
 		}
 		if (fleetShip.y < 0 && !fleetShip.active) {
@@ -273,6 +280,7 @@ function resetShip() {
 	isShooting = false;
 	shipY = shipStartY;
 	moveDirection = 0;
+	shipColour = arrShipColours[~~(Math.random() * arrShipColours.length)];
 }
 
 /**
@@ -291,7 +299,7 @@ function resetGame() {
 			x: (i % 8)*2*spriteSize + fleetOriginX,
 			y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
 			active: 0,
-			colour: 230
+			colour: 0
 		};
 	}
 }
@@ -310,20 +318,20 @@ function draw() {
 	// Draw the fleet
 	for (var i = 0; i < fleetSize; i++) {
 		if (arrFleet[i].active) {
-			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 120, 1);
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, arrFleet[i].colour);
 		} else {
-			var alpha = 0.3;
+			var ghost = true;
 			var colourHue = 230;
 			if (currentGameState == GameStates.LOSS) {
-				alpha = 1;
+				ghost = false;
 				colourHue = 0; // Red
 			}
-			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, colourHue, alpha);
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, colourHue, ghost);
 		}
 	}
 
 	// Draw the player
-	drawSprite(shipSprite, shipX,shipY, 130, 1);
+	drawSprite(shipSprite, shipX,shipY, shipColour);
 
 	switch(currentGameState) {
 		case GameStates.READY:
@@ -346,16 +354,26 @@ function draw() {
  * @param {int} x
  * @param {int} y
  * @param {int} hue
- * @param {Number} alpha
+ * @param {Boolean} ghost - Show a greyed out ghost instead
  */
-function drawSprite(mapString, x, y, hue, alpha) {
+function drawSprite(mapString, x, y, hue, ghost) {
+	if (ghost == undefined) {
+		ghost = false;
+	}
+
 	for(var i = 0; i < mapString.length; i++) {
 		var currentVal = parseInt(mapString.charAt(i));
 		if (!currentVal) {
 			continue;
 		}
-		var level = (1-(currentVal / 9)) * 100;
-		setFill("hsla("+hue+",50%,"+level+"%,"+alpha+")");
+
+		var level = (1-(currentVal / 9));
+		if (!ghost) {
+			setFill("hsla("+hue+",80%,"+level*100+"%,1)");
+		} else {
+			setFill("hsla("+hue+",10%,"+level*100+"%,0.3)");
+		}
+
 		var pixSize = 2;
 		var targetX = x + (i % 16) * pixSize;
 		var targetY = y + Math.floor(i / 16) * pixSize;

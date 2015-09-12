@@ -5,7 +5,7 @@ var spriteSize = 32;
 var sideSpeed = 5;
 var launchSpeed = 10;
 
-var hitThreshold = spriteSize / 4;
+var hitThreshold = spriteSize / 3;
 var edgeBuffer = 0.99;
 
 var screenWidth = 800;
@@ -23,6 +23,34 @@ var GameStates = {
 	WIN: 2,
 	LOSS: 3
 };
+
+
+/*********************************************************
+ * Game Vars
+ *********************************************************/
+// Ship
+var shipStartX = screenWidth / 2 - spriteSize / 2;
+var shipStartY = screenHeight - screenHeight / 10;
+var shipX = shipStartX;
+var shipY = shipStartY;
+var moveDirection = 0;
+var isShooting = false;
+
+// Fleet
+var arrFleet = [];
+for(var i = 0; i < fleetSize; i++) {
+	arrFleet[i] = {
+		x: (i % 8)*2*spriteSize + 160,
+		y: Math.floor(i/8)*2*spriteSize + 250,
+		active: 0,
+		colour: 230
+	};
+}
+var fleetDirX = 1;
+
+// Core game
+var currentGameState = GameStates.READY;
+
 
 /*********************************************************
  * Core functionality
@@ -45,6 +73,22 @@ window.onkeydown = function(evt) {
 	evt = evt || window.event;
 	var keyCode = evt.keyCode;
 
+	// Accomodates the "Any key to start"
+	if (currentGameState === GameStates.READY) {
+		currentGameState = GameStates.PROGRESS;
+		return;
+	}
+
+	// Refuse all input if the game is over
+	if (currentGameState !== GameStates.PROGRESS) {
+		return;
+	}
+
+	// Handle Pause
+	if (keyCode == 80) {
+		currentGameState = GameStates.READY;
+	}
+
 	if (keyCode == 87 || keyCode == 119) {
 		isShooting = true;
 		moveDirection = 0;
@@ -58,6 +102,8 @@ window.onkeydown = function(evt) {
 			moveDirection = 1;
 		}	
 	}
+
+
 }
 window.onkeyup = function(evt) {
 	evt = evt || window.event;
@@ -146,35 +192,11 @@ function mainLoop() {
 	draw();
 }
 
-/*********************************************************
- * Game Vars
- *********************************************************/
-// Ship
-var shipX = screenWidth / 2 - spriteSize / 2;
-var shipY = screenHeight - screenHeight / 10;
-var moveDirection = 0;
-var isShooting = false;
-
-// Fleet
-var arrFleet = [];
-for(var i = 0; i < fleetSize; i++) {
-	arrFleet[i] = {
-		x: (i % 8)*2*spriteSize + 160,
-		y: Math.floor(i/8)*2*spriteSize + 250,
-		active: 0,
-		colour: 230
-	};
-}
-var fleetDirX = 1;
-
-// Game
-var currentGameState = GameStates.READY;
 
 /*********************************************************
  * Minification helpers
  *********************************************************/
 function setFill(fill) {
-	// TODO use hsl
 	ctx.fillStyle = fill;
 
 }
@@ -182,31 +204,39 @@ function drawRect (x1, y1, x2, y2) {
 	ctx.fillRect(x1,y1,x2,y2);
 }
 
+
 /*********************************************************
  * Game Functions
  *********************************************************/
 
 /**
- * Draw the whole screen
+ * Draw the whole scene
  */
 function draw() {
-	setFill("gray")
-	drawRect(0,0,screenWidth,screenHeight);
+	drawMap();
 
-	setFill("blue");
-	drawRect(0,screenHeight - 10,screenWidth, 10);
-
+	// Draw the fleet
 	for (var i = 0; i < fleetSize; i++) {
 		if (arrFleet[i].active) {
 			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 120, 1);
 		} else {
-			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 230, 0.5);
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 230, 0.3);
 		}
 		
 	}
 
+	// Draw the player
 	drawSprite(shipSprite, shipX,shipY, 130, 1);
-	
+
+	switch(currentGameState) {
+		case GameStates.READY:
+			drawReadyState();
+			break;
+		case GameStates.WIN:
+			break;
+		case GameStates.LOSS:
+			break;
+	}
 }
 
 /**
@@ -233,7 +263,51 @@ function drawSprite(mapString, x, y, hue, alpha) {
 	}
 }
 
+/**
+ * Helper to render White text with a black stroke
+ * @param {String} text
+ * @param {int} x
+ * @param {int} y
+ */
+function drawStrokedText(text, x, y) {
+	ctx.font = "28px Courier New";
+	ctx.strokeStyle = 'black';
+	ctx.lineWidth = 4;
+	ctx.strokeText(text, x, y);
+	ctx.fillStyle = 'white';
+	ctx.fillText(text, x, y);
+}
+
+/**
+ * Draw the game map.
+ */
+function drawMap() {
+	setFill("#111111")
+	drawRect(0,0,screenWidth,screenHeight);
+
+	setFill("#003300");
+	drawRect(0,screenHeight - 10,screenWidth, 10);
+}
+
+/**
+ * Draw the "Ready" state
+ */
+function drawReadyState() {
+	drawStrokedText("Assemble the fleet",50,50);
+	drawStrokedText("Earth must be DESTROYED!", 50, 100);
+
+	drawStrokedText("P to Pause", screenWidth - 200, 25);
+
+	drawStrokedText("W", shipX + 7, shipY - 35);
+	drawStrokedText("^", shipX + 7, shipY);
+	drawStrokedText("A <", shipX - 60, shipY + 25);
+	drawStrokedText("> D", shipX + 40, shipY + 25);
+}
+
+/**
+ * Reset the Ship position
+ */
 function resetShip() {
 	isShooting = false;
-	shipY = screenHeight - screenHeight / 10;
+	shipY = shipStartY;
 }

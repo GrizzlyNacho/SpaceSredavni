@@ -90,8 +90,8 @@ window.onkeydown = function(evt) {
 
 	// Start a new game
 	if (keyCode == 82 &&
-		(currentGameState === GameStates.WIN || 
-		currentGameState === GameStates.LOSS)) {
+		(currentGameState === GameStates.WIN || currentGameState === GameStates.LOSS)) {
+		
 		resetGame();
 		return;
 	}
@@ -132,6 +132,25 @@ window.onkeyup = function(evt) {
 	if ((keyCode == 68 || keyCode == 100) && moveDirection == 1) {
 		moveDirection = 0;
 	}
+}
+
+/**
+ * Main Game Loop
+ */
+function mainLoop() {
+	switch(currentGameState) {
+		case GameStates.PROGRESS:
+			updateMovement();
+			hitDetectionAndEndGame();
+			break;
+		case GameStates.WIN:
+			updateVictoryMovement();
+			break;
+		case GameStates.LOSS:
+			break;
+	}
+
+	draw();
 }
 
 /**
@@ -198,32 +217,38 @@ function hitDetectionAndEndGame() {
 }
 
 /**
- * Main Game Loop
+ * Reset the Ship Y position
  */
-function mainLoop() {
-	if (currentGameState === GameStates.PROGRESS) {
-		updateMovement();
-		hitDetectionAndEndGame();
+function resetShip() {
+	isShooting = false;
+	shipY = shipStartY;
+	moveDirection = 0;
+}
+
+/**
+ * Reset the whole game
+ */
+function resetGame() {
+	currentGameState = GameStates.READY;
+
+	shipX = shipStartX;
+	resetShip();
+
+	fleetDirX = 1;
+	fleetAscendTicks = 0;
+	for(var i = 0; i < fleetSize; i++) {
+		arrFleet[i] = {
+			x: (i % 8)*2*spriteSize + fleetOriginX,
+			y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
+			active: 0,
+			colour: 230
+		};
 	}
-
-	draw();
 }
 
 
 /*********************************************************
- * Minification helpers
- *********************************************************/
-function setFill(fill) {
-	ctx.fillStyle = fill;
-
-}
-function drawRect (x1, y1, x2, y2) {
-	ctx.fillRect(x1,y1,x2,y2);
-}
-
-
-/*********************************************************
- * Game Functions
+ * Draw Functions
  *********************************************************/
 
 /**
@@ -321,7 +346,6 @@ function drawMap() {
 		drawRect(star.x, star.y, star.size, star.size);
 	}
 
-
 	// Center Line
 	//setFill("blue");
 	//drawRect(screenWidth/2 - 0.5, 0, 1, screenHeight);
@@ -389,32 +413,13 @@ function drawWinState() {
 	);
 }
 
-/**
- * Reset the Ship Y position
- */
-function resetShip() {
-	isShooting = false;
-	shipY = shipStartY;
-	moveDirection = 0;
+/*********************************************************
+ * Minification helpers
+ *********************************************************/
+function setFill(fill) {
+	ctx.fillStyle = fill;
+
 }
-
-/**
- * Reset the whole game
- */
-function resetGame() {
-	currentGameState = GameStates.READY;
-
-	shipX = shipStartX;
-	resetShip();
-
-	fleetDirX = 1;
-	fleetAscendTicks = 0;
-	for(var i = 0; i < fleetSize; i++) {
-		arrFleet[i] = {
-			x: (i % 8)*2*spriteSize + fleetOriginX,
-			y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
-			active: 0,
-			colour: 230
-		};
-	}
+function drawRect (x1, y1, x2, y2) {
+	ctx.fillRect(x1,y1,x2,y2);
 }

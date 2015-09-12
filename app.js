@@ -45,6 +45,20 @@ var fleetAscendTicks = 0;
 // Core game
 var currentGameState = GameStates.READY;
 
+var arrStars = [];
+var arrStarColours = [
+	"#9db4ff", "#a2b9ff", "#a7bcff", "#aabfff", "#afc3ff", "#baccff", "#c0d1ff",
+	"#cad8ff", "#e4e8ff", "#edeeff", "#fbf8ff", "#fff9f9", "#fff5ec", "#fff4e8",
+	"#fff1df", "#ffebd1", "#ffd7ae", "#ffc690", "#ffbe7f", "#ffbb7b"
+];
+for(var i = 0; i < 500; i++) {
+	arrStars[i] = {
+		x: ~~(Math.random() * screenWidth),
+		y: ~~(Math.random() * screenHeight),
+		size: ~~(Math.random() * 2) + 1,
+		colour: arrStarColours[~~(Math.random() * arrStarColours.length)]
+	};
+}
 
 /*********************************************************
  * Core functionality
@@ -295,8 +309,18 @@ function drawStrokedText(text, x, y) {
  * Draw the game map.
  */
 function drawMap() {
+	
+	// Space
 	setFill("#111111")
 	drawRect(0,0,screenWidth,screenHeight);
+
+	// Stars
+	for(var i = 0; i < arrStars.length; i++) {
+		var star = arrStars[i];
+		setFill(star.colour);
+		drawRect(star.x, star.y, star.size, star.size);
+	}
+
 
 	// Center Line
 	//setFill("blue");

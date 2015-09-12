@@ -51,7 +51,7 @@ for(var i = 0; i < fleetSize; i++) {
 var fleetDirX = 1;
 
 // Core game
-var currentGameState = GameStates.LOSS;
+var currentGameState = GameStates.READY;
 
 
 /*********************************************************
@@ -349,10 +349,19 @@ function drawLossState() {
 }
 
 /**
- * 
+ * Draw the Victory screen details
  */
 function drawWinState() {
+	drawStrokedText("VICTORY!", 
+		screenWidth / 2 - 58, 200
+	);
+	drawStrokedText("The fleet goes to Earth!", 
+		screenWidth / 2 - 200, 250
+	);
 
+	drawStrokedText("Y: Play Again", 
+		screenWidth / 2 - 100, 300
+	);
 }
 
 /**

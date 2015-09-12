@@ -72,15 +72,9 @@ window.onkeyup = function(evt) {
 }
 
 /**
- * Main Game Loop
+ * Update the ship and fleet positions
  */
-function mainLoop() {
-	if (currentGameState === GameStates.WIN 
-		|| currentGameState === GameStates.LOSS) {
-
-		return;
-	}
-
+function updateMovement() {
 	// Ship Movement
 	if (isShooting) {
 		shipY -= launchSpeed;
@@ -113,7 +107,13 @@ function mainLoop() {
 			fleetAscendTicks = spriteSize / fleetSpeed;
 		}
 	}
+}
 
+/**
+ * Check on hit detection of the player ship to fleet positions
+ * as well as the win and loss scenarios.
+ */
+function hitDetectionAndEndGame() {
 	// Fleet Hit Detection and End Game condition
 	var allActivated = true;
 	for(var i = 0; i < fleetSize; i++) {
@@ -125,14 +125,23 @@ function mainLoop() {
 			resetShip();
 		}
 		if (fleetShip.y < 0 && !fleetShip.active) {
-			console.log("GAME OVER");
+			currentGameState = GameStates.LOSS;
 		}
 		allActivated &= fleetShip.active;
 	}
 	if (allActivated) {
-		console.log("You Win!");
+		currentGameState = GameStates.WIN;
 	}
+}
 
+/**
+ * Main Game Loop
+ */
+function mainLoop() {
+	if (currentGameState === GameStates.PROGRESS) {
+		updateMovement();
+		hitDetectionAndEndGame();
+	}
 
 	draw();
 }

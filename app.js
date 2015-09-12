@@ -5,15 +5,24 @@ var spriteSize = 32;
 var sideSpeed = 5;
 var launchSpeed = 10;
 
-var hitThreshold = spriteSize / 2;
+var hitThreshold = spriteSize / 4;
 var edgeBuffer = 0.99;
 
 var screenWidth = 800;
 var screenHeight = 500;
 
 var fleetSize = 24;
-var fleetSpeed = 2;
+var fleetSpeed = 1.5;
 var fleetAscendTicks = 0;
+
+var shipSprite = "0000070000700000000075000057000000075000000570000075000000005700075000000000057075000000000000577500000000000057075000055000057000750055550057000777775335777770777555555555577775553357753355577775335775335777077555577555577000077555555770000000007557000000";
+
+var GameStates = {
+	READY: 0,
+	PROGRESS: 1,
+	WIN: 2,
+	LOSS: 3
+};
 
 /*********************************************************
  * Core functionality
@@ -50,7 +59,6 @@ window.onkeydown = function(evt) {
 		}	
 	}
 }
-
 window.onkeyup = function(evt) {
 	evt = evt || window.event;
 	var keyCode = evt.keyCode;
@@ -67,6 +75,12 @@ window.onkeyup = function(evt) {
  * Main Game Loop
  */
 function mainLoop() {
+	if (currentGameState === GameStates.WIN 
+		|| currentGameState === GameStates.LOSS) {
+
+		return;
+	}
+
 	// Ship Movement
 	if (isShooting) {
 		shipY -= launchSpeed;
@@ -74,7 +88,7 @@ function mainLoop() {
 	shipX += moveDirection * sideSpeed;
 
 	// Ship off screen
-	if (shipY <= 0) {
+	if (shipY <= -spriteSize) {
 		resetShip();
 	}
 
@@ -89,8 +103,8 @@ function mainLoop() {
 		for(var i = 0; i < fleetSize; i++) {
 			var fleetShip = arrFleet[i];
 			fleetShip.x += fleetDirX * fleetSpeed;
-			if (fleetShip.x + spriteSize > screenWidth*edgeBuffer
-				|| fleetShip.x < screenWidth*(1-edgeBuffer)) {
+			if (!fleetShip.active && (fleetShip.x + spriteSize > screenWidth*edgeBuffer
+				|| fleetShip.x < screenWidth*(1-edgeBuffer))) {
 				wallHit = 1;
 			}
 		}
@@ -106,14 +120,14 @@ function mainLoop() {
 		var fleetShip = arrFleet[i];
 		if (Math.abs(shipX - fleetShip.x) < hitThreshold
 			&& Math.abs(shipY - fleetShip.y < hitThreshold
-			&& !fleetShip.a)) {
-			fleetShip.a = 1;
+			&& !fleetShip.active)) {
+			fleetShip.active = 1;
 			resetShip();
 		}
-		if (fleetShip.y < 0 && !fleetShip.a) {
+		if (fleetShip.y < 0 && !fleetShip.active) {
 			console.log("GAME OVER");
 		}
-		allActivated &= fleetShip.a;
+		allActivated &= fleetShip.active;
 	}
 	if (allActivated) {
 		console.log("You Win!");
@@ -138,11 +152,14 @@ for(var i = 0; i < fleetSize; i++) {
 	arrFleet[i] = {
 		x: (i % 8)*2*spriteSize + 160,
 		y: Math.floor(i/8)*2*spriteSize + 250,
-		a: 0
+		active: 0,
+		colour: 230
 	};
 }
 var fleetDirX = 1;
 
+// Game
+var currentGameState = GameStates.READY;
 
 /*********************************************************
  * Minification helpers
@@ -171,18 +188,15 @@ function draw() {
 	drawRect(0,screenHeight - 10,screenWidth, 10);
 
 	for (var i = 0; i < fleetSize; i++) {
-		if (arrFleet[i].a) {
-			drawSprite("0000070000700000000075000057000000075000000570000075000000005700075000000000057075000000000000577500000000000057075000055000057000750055550057000777775335777770777555555555577775553357753355577775335775335777077555577555577000077555555770000000007557000000",
-				arrFleet[i].x, arrFleet[i].y, 120, 1);
+		if (arrFleet[i].active) {
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 120, 1);
 		} else {
-			drawSprite("0000070000700000000075000057000000075000000570000075000000005700075000000000057075000000000000577500000000000057075000055000057000750055550057000777775335777770777555555555577775553357753355577775335775335777077555577555577000077555555770000000007557000000",
-				arrFleet[i].x, arrFleet[i].y, 200, 1);
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 230, 0.5);
 		}
 		
 	}
 
-	drawSprite("0000070000700000000075000057000000075000000570000075000000005700075000000000057075000000000000577500000000000057075000055000057000750055550057000777775335777770777555555555577775553357753355577775335775335777077555577555577000077555555770000000007557000000",
-		shipX,shipY, 60, 1);
+	drawSprite(shipSprite, shipX,shipY, 130, 1);
 	
 }
 

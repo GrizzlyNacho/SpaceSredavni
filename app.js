@@ -389,7 +389,7 @@ function drawSprite(mapString, x, y, hue, ghost) {
  * @param {int} y
  */
 function drawStrokedText(text, x, y) {
-	ctx.font = "28px Courier New";
+	ctx.font = "28px Lucida Console";
 	ctx.strokeStyle = 'black';
 	ctx.lineWidth = 4;
 	ctx.strokeText(text, x, y);

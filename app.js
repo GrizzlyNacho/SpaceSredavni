@@ -75,7 +75,7 @@ window.onkeydown = function(evt) {
 	}
 
 	// Start a new game
-	if (keyCode == 89 &&
+	if (keyCode == 82 &&
 		(currentGameState === GameStates.WIN || 
 		currentGameState === GameStates.LOSS)) {
 		resetGame();
@@ -92,11 +92,13 @@ window.onkeydown = function(evt) {
 		currentGameState = GameStates.READY;
 	}
 
+	// Firing the ship (W)
 	if (keyCode == 87 || keyCode == 119) {
 		isShooting = true;
 		moveDirection = 0;
 	}
 
+	// Steering (A and D)
 	if (!isShooting) {
 		if (keyCode == 65 || keyCode == 97) {
 			moveDirection = -1;
@@ -342,8 +344,8 @@ function drawLossState() {
 		screenWidth / 2 - 220, 250
 	);
 
-	drawStrokedText("Y: Play Again", 
-		screenWidth / 2 - 100, 300
+	drawStrokedText("R: Restart", 
+		screenWidth / 2 - 80, 300
 	);
 }
 
@@ -358,8 +360,8 @@ function drawWinState() {
 		screenWidth / 2 - 200, 250
 	);
 
-	drawStrokedText("Y: Play Again", 
-		screenWidth / 2 - 100, 300
+	drawStrokedText("R: Restart", 
+		screenWidth / 2 - 80, 300
 	);
 }
 

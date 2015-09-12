@@ -30,18 +30,20 @@ var GameStates = {
  *********************************************************/
 // Ship
 var shipStartX = screenWidth / 2 - spriteSize / 2;
-var shipStartY = screenHeight - screenHeight / 10;
+var shipStartY = screenHeight - screenHeight / 13;
 var shipX = shipStartX;
 var shipY = shipStartY;
 var moveDirection = 0;
 var isShooting = false;
 
 // Fleet
+var fleetOriginX = 160;
+var fleetOriginY = 250;
 var arrFleet = [];
 for(var i = 0; i < fleetSize; i++) {
 	arrFleet[i] = {
-		x: (i % 8)*2*spriteSize + 160,
-		y: Math.floor(i/8)*2*spriteSize + 250,
+		x: (i % 8)*2*spriteSize + fleetOriginX,
+		y: Math.floor(i/8)*2*spriteSize + fleetOriginY,
 		active: 0,
 		colour: 230
 	};
@@ -220,7 +222,13 @@ function draw() {
 		if (arrFleet[i].active) {
 			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 120, 1);
 		} else {
-			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, 230, 0.3);
+			var alpha = 0.3;
+			var colourHue = 230;
+			if (currentGameState == GameStates.LOSS) {
+				alpha = 1;
+				colourHue = 0; // Red
+			}
+			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, colourHue, alpha);
 		}
 		
 	}
@@ -231,12 +239,14 @@ function draw() {
 	switch(currentGameState) {
 		case GameStates.READY:
 			drawReadyState();
-			break;
+			return;
 		case GameStates.WIN:
 			break;
 		case GameStates.LOSS:
 			break;
 	}
+
+	drawStrokedText("P: Pause", screenWidth - 150, 25);
 }
 
 /**
@@ -285,23 +295,42 @@ function drawMap() {
 	setFill("#111111")
 	drawRect(0,0,screenWidth,screenHeight);
 
-	setFill("#003300");
-	drawRect(0,screenHeight - 10,screenWidth, 10);
 }
 
 /**
  * Draw the "Ready" state
  */
 function drawReadyState() {
-	drawStrokedText("Assemble the fleet",50,50);
-	drawStrokedText("Earth must be DESTROYED!", 50, 100);
-
-	drawStrokedText("P to Pause", screenWidth - 200, 25);
-
-	drawStrokedText("W", shipX + 7, shipY - 35);
-	drawStrokedText("^", shipX + 7, shipY);
+	drawStrokedText("W: LAUNCH", shipX - 60, shipY - 10);
 	drawStrokedText("A <", shipX - 60, shipY + 25);
 	drawStrokedText("> D", shipX + 40, shipY + 25);
+
+	setFill("white");
+	var fleetStartX = arrFleet[0].x;
+	var fleetStartY = arrFleet[0].y;
+	var fleetEndX = arrFleet[fleetSize - 1].x + spriteSize;
+	var fleetEndY = arrFleet[fleetSize - 1].y + spriteSize;
+	drawRect(fleetStartX-5, fleetStartY-5, 5*spriteSize, 1);
+	drawRect(fleetStartX-5, fleetStartY-5, 1, 3*spriteSize);
+	drawRect(fleetEndX+5 - 5*spriteSize, fleetEndY+5, 5*spriteSize, 1);
+	drawRect(fleetEndX+5, fleetEndY+5 - 3*spriteSize, 1, 3*spriteSize);
+	drawStrokedText(
+		"Assemble the fleet",
+		(fleetEndX + fleetStartX)/2 - 150,
+		(fleetEndY + fleetStartY)/2 + 7
+	);
+
+	if (fleetStartY > 50) {
+		drawStrokedText("Earth must be DESTROYED!", 
+			screenWidth / 2 - 200, 50
+		);
+	}
+}
+
+/**
+ */
+function drawLossState() {
+
 }
 
 /**

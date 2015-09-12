@@ -160,8 +160,9 @@ function updateVictoryMovement() {
 	var fleetDirY = 0;
 
 	// Line up with center and then fly out the top
-	if (Math.abs(arrFleet[0].x - fleetOriginX) < fleetSpeed) {
-		fleetDirY = 1;
+	if (Math.abs(arrFleet[0].x - fleetOriginX) < 2*fleetSpeed) {
+		fleetDirY = -1;
+		fleetDirX = 0;
 	} else if (arrFleet[0].x > fleetOriginX) {
 		fleetDirX = -1;
 	} else {

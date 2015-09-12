@@ -147,10 +147,38 @@ function mainLoop() {
 			updateVictoryMovement();
 			break;
 		case GameStates.LOSS:
+			updateLossMovement();
 			break;
 	}
 
 	draw();
+}
+
+/**
+ * Do the loss Dance
+ */
+function updateLossMovement() {
+	var fleetDirY = 0;
+
+	if (Math.abs(arrFleet[0].x - fleetOriginX) < 2*fleetSpeed 
+		&& Math.abs(arrFleet[0].y - fleetOriginY) < 2*fleetSpeed) {
+		return;
+	}
+
+	// Line up with center and then fly out the top
+	if (Math.abs(arrFleet[0].x - fleetOriginX) < 2*fleetSpeed) {
+		fleetDirY = 1;
+		fleetDirX = 0;
+	} else if (arrFleet[0].x > fleetOriginX) {
+		fleetDirX = -1;
+	} else {
+		fleetDirX = 1;
+	}
+
+	for (var i = 0; i < fleetSize; i++) {
+		arrFleet[i].x += fleetSpeed*fleetDirX;
+		arrFleet[i].y += fleetSpeed*fleetDirY;
+	}
 }
 
 /**
@@ -292,7 +320,6 @@ function draw() {
 			}
 			drawSprite(shipSprite, arrFleet[i].x, arrFleet[i].y, colourHue, alpha);
 		}
-		
 	}
 
 	// Draw the player
@@ -368,9 +395,6 @@ function drawMap() {
 		drawRect(star.x, star.y, star.size, star.size);
 	}
 
-	// Center Line
-	//setFill("blue");
-	//drawRect(screenWidth/2 - 0.5, 0, 1, screenHeight);
 }
 
 /**
@@ -408,14 +432,14 @@ function drawReadyState() {
  */
 function drawLossState() {
 	drawStrokedText("GAME OVER", 
-		screenWidth / 2 - 75, 200
+		screenWidth / 2 - 75, 100
 	);
 	drawStrokedText("The fleet was not prepared", 
-		screenWidth / 2 - 220, 250
+		screenWidth / 2 - 220, 150
 	);
 
 	drawStrokedText("R: Restart", 
-		screenWidth / 2 - 80, 300
+		screenWidth / 2 - 80, 200
 	);
 }
 

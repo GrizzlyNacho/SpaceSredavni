@@ -426,7 +426,7 @@ function drawWinState() {
 	drawStrokedText("VICTORY!", 
 		screenWidth / 2 - 58, 200
 	);
-	drawStrokedText("The fleet goes to Earth!", 
+	drawStrokedText("The fleet heads for Earth!", 
 		screenWidth / 2 - 200, 250
 	);
 

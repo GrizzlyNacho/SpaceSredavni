@@ -433,13 +433,13 @@ function drawReadyState() {
 	drawRect(fleetEndX+5 - 5*spriteSize, fleetEndY+5, 5*spriteSize, 1);
 	drawRect(fleetEndX+5, fleetEndY+5 - 3*spriteSize, 1, 3*spriteSize);
 	drawStrokedText(
-		"Assemble the fleet",
+		"ASSEMBLE THE FLEET",
 		(fleetEndX + fleetStartX)/2 - 150,
 		(fleetEndY + fleetStartY)/2 + 7
 	);
 
 	if (fleetStartY > 50) {
-		drawStrokedText("Earth must be DESTROYED!", 
+		drawStrokedText("EARTH MUST BE DESTROYED!", 
 			screenWidth / 2 - 200, 50
 		);
 	}
@@ -452,11 +452,11 @@ function drawLossState() {
 	drawStrokedText("GAME OVER", 
 		screenWidth / 2 - 75, 100
 	);
-	drawStrokedText("The fleet was not prepared", 
+	drawStrokedText("THE FLEET WAS NOT PREPARED", 
 		screenWidth / 2 - 220, 150
 	);
 
-	drawStrokedText("R: Restart", 
+	drawStrokedText("R: RESTART", 
 		screenWidth / 2 - 80, 200
 	);
 }
@@ -468,11 +468,11 @@ function drawWinState() {
 	drawStrokedText("VICTORY!", 
 		screenWidth / 2 - 58, 200
 	);
-	drawStrokedText("The fleet heads for Earth!", 
+	drawStrokedText("THE FLEET HEADS FOR EARTH!", 
 		screenWidth / 2 - 200, 250
 	);
 
-	drawStrokedText("R: Restart", 
+	drawStrokedText("R: RESTART", 
 		screenWidth / 2 - 80, 300
 	);
 }

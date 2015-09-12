@@ -51,7 +51,7 @@ for(var i = 0; i < fleetSize; i++) {
 var fleetDirX = 1;
 
 // Core game
-var currentGameState = GameStates.READY;
+var currentGameState = GameStates.LOSS;
 
 
 /*********************************************************
@@ -241,9 +241,11 @@ function draw() {
 			drawReadyState();
 			return;
 		case GameStates.WIN:
-			break;
+			drawWinState();
+			return;
 		case GameStates.LOSS:
-			break;
+			drawLossState();
+			return;
 	}
 
 	drawStrokedText("P: Pause", screenWidth - 150, 25);
@@ -295,6 +297,9 @@ function drawMap() {
 	setFill("#111111")
 	drawRect(0,0,screenWidth,screenHeight);
 
+	// Center Line
+	//setFill("blue");
+	//drawRect(screenWidth/2 - 0.5, 0, 1, screenHeight);
 }
 
 /**
@@ -328,13 +333,30 @@ function drawReadyState() {
 }
 
 /**
+ * Draw the game over screen details
  */
 function drawLossState() {
+	drawStrokedText("GAME OVER", 
+		screenWidth / 2 - 75, 200
+	);
+	drawStrokedText("The fleet was not prepared", 
+		screenWidth / 2 - 220, 250
+	);
+
+	drawStrokedText("Y: Play Again", 
+		screenWidth / 2 - 100, 300
+	);
+}
+
+/**
+ * 
+ */
+function drawWinState() {
 
 }
 
 /**
- * Reset the Ship position
+ * Reset the Ship Y position
  */
 function resetShip() {
 	isShooting = false;
